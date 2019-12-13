@@ -3,6 +3,9 @@
 
 const Promise = require('bluebird');
 const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const compression = require('compression')
 const optional = require("optional");
 
 const server = require('./server');
@@ -240,18 +243,18 @@ helpersInitialized.then(function(o) {
   app.use(middleware_responseTime_start);
 
   app.use(redirectIfNotHttps);
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
+  app.use(cookieParser);
+  app.use(bodyParser);
   app.use(writeDefaultHead);
   app.use(redirectIfWrongDomain);
   app.use(redirectIfApiDomain);
 
   if (devMode) {
-    app.use(express.compress());
+    app.use(compression());
   } else {
     // Cloudflare would apply gzip if we didn't
     // but it's about 2x faster if we do the gzip (for the inbox query on mike's account)
-    app.use(express.compress());
+    app.use(compression());
   }
   app.use(middleware_log_request_body);
   app.use(middleware_log_middleware_errors);
