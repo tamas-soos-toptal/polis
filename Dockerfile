@@ -1,29 +1,8 @@
-FROM node:6
+FROM node:12.13.1
 
-# For admin functionality, fill this out
-ENV ADMIN_EMAILS []
-ENV ADMIN_EMAIL_DATA_EXPORT ""
-ENV ADMIN_EMAIL_DATA_EXPORT_TEST ""
-ENV ADMIN_EMAIL_EMAIL_TEST ""
-ENV ADMIN_UIDS []
-
-ENV DATABASE_FOR_READS_NAME DATABASE_URL
-ENV DATABASE_URL postgres://postgres:oiPorg3Nrz0yqDLE@postgres:5432/polis-dev
-ENV DEV_MODE true
-ENV DISABLE_INTERCOM true
-ENV DOMAIN_OVERRIDE localhost:5000
-ENV PORT 5000
-ENV STATIC_FILES_ADMINDASH_PORT 5002
-ENV STATIC_FILES_HOST localhost
-ENV STATIC_FILES_PORT 5001
-ENV STRIPE_SECRET_KEY sk_test_NFBDEThkpHCYBzXPJuBlY8TW
-
+VOLUME ["/app"]
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
-
-ADD . .
-
 EXPOSE 5000
-CMD node --max_old_space_size=400 --gc_interval=100 --harmony app.js
+
+CMD [/bin/sh -c "[ -e /bin/bash ] && /bin/bash || /bin/sh"]
