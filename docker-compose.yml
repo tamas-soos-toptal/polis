@@ -6,28 +6,28 @@
 version: "3.1"
 
 services:
-
   node:
     container_name: polis-server
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    env_file: .env
     depends_on:
-      - 'postgres'
-      - 'static'
+      - postgres
+      - static
     networks:
-      - 'polis-dev'
+      - polis-dev
     ports:
-      - "5000:5000"
+      - 5000:5000
 
-
-  math:
-    container_name: polis-math
-    depends_on:
-      - 'postgres'
-    build:
-      context: https://github.com/pol-is/polisMath.git
-
+  # math:
+  #   container_name: polis-math
+  #   depends_on:
+  #     - postgres
+  #   build:
+  #     context: https://github.com/pol-is/polisMath.git
 
   postgres:
     container_name: polis-db
@@ -36,21 +36,18 @@ services:
       context: .
       dockerfile: Dockerfile-db
     networks:
-      - 'polis-dev'
+      - polis-dev
     volumes:
-      - 'backups:/backups'
-      - 'postgres:/var/lib/postgresql/data'
-
+      - backups:/backups
+      - postgres:/var/lib/postgresql/data
 
   static:
     container_name: polis-static
     image: nginx:1.14
     networks:
-      - 'polis-dev'
+      - polis-dev
     ports:
-      - '5002:80'
-
-
+      - 5002:80
 
 networks:
   polis-dev:
@@ -58,4 +55,3 @@ networks:
 volumes:
   backups:
   postgres:
-
