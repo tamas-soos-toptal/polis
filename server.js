@@ -2476,6 +2476,7 @@ function initializePolisHelpers() {
     process.env.DOMAIN_WHITELIST_ITEM_08,
     "localhost:5001",
     "localhost:5002",
+    "static:5002",
     "canvas.instructure.com", // LTI
     "canvas.uw.edu", // LTI
     "canvas.shoreline.edu", // LTI
