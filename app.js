@@ -233,6 +233,8 @@ helpersInitialized.then(function(o) {
   ////////////////////////////////////////////
   ////////////////////////////////////////////
 
+  app.get("/health", (req, res) => res.send(process.env));
+
   app.use(function(req, res, next) {
     console.log("before");
     console.log(req.body);
@@ -815,7 +817,7 @@ helpersInitialized.then(function(o) {
     need('tid', getInt, assignToP),
     need('include', getBool, assignToP),
     handle_POST_reportCommentSelections);
-    
+
 
 
   // use this to generate them
@@ -1303,7 +1305,7 @@ helpersInitialized.then(function(o) {
   // Conversation aliases
   app.get(/^\/football$/, makeRedirectorTo("/2arcefpshi"));
   app.get(/^\/pdf$/, makeRedirectorTo("/23mymwyhkn")); // pdf 2017
-  app.get(/^\/nabi$/, makeRedirectorTo("/8ufpzc6fkm")); // 
+  app.get(/^\/nabi$/, makeRedirectorTo("/8ufpzc6fkm")); //
 
 
   app.get(/^\/[0-9][0-9A-Za-z]+(\/.*)?/, fetchIndexForConversation); // conversation view
@@ -1362,7 +1364,7 @@ helpersInitialized.then(function(o) {
   app.get(/^\/company$/, fetchIndexForAdminPage);
 
   app.get(/^\/report\/r?[0-9][0-9A-Za-z]+(\/.*)?/, fetchIndexForReportPage);
-  
+
   app.get(/^\/embed$/, makeFileFetcher(hostname, portForAdminFiles, "/embed.html", {
     'Content-Type': "text/html",
   }));
