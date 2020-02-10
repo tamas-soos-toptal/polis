@@ -66,6 +66,13 @@ const parsePgConnectionString = require('pg-connection-string').parse;
 const usingReplica = process.env.DATABASE_URL !== process.env[process.env.DATABASE_FOR_READS_NAME];
 const poolSize = devMode ? 2 : (usingReplica ? 3 : 12)
 
+console.log("=====================");
+console.log("DATABASE CONNECTIONS:");
+console.log("=====================");
+console.log("MAIN:", process.env.DATABASE_URL);
+console.log("READ:", process.env[process.env.DATABASE_FOR_READS_NAME]);
+console.log("=====================");
+
 // not sure how many of these config options we really need anymore
 const pgConnection = Object.assign(parsePgConnectionString(process.env.DATABASE_URL),
   {max: poolSize,
@@ -239,7 +246,7 @@ if (useTranslateApi) {
 
 
 //var SegfaultHandler = require('segfault-handler');
- 
+
 //SegfaultHandler.registerHandler("segfault.log");
 
 // var conversion = {
