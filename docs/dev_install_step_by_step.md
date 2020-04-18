@@ -4,7 +4,7 @@
      * `git clone https://github.com/pol-is-trial-balloon/polisCode.git`
 1. Install necessary apt packages
      * `sudo apt update`
-     *  sudo apt install -y postgresql`
+     * `sudo apt install -y postgresql`
      * `sudo apt install -y postgresql-contrib`
      * `sudo apt install -y postgresql-server-dev-all`
      * `sudo apt install -y npm`
