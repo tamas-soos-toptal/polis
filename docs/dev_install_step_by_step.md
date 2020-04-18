@@ -1,12 +1,20 @@
-* TTD: remove unneccesary environment variables; contintue with px script
+* \# TTD: remove unneccesary environment variables; contintue with px script
 1. \# Install ubuntu 18.04 minimal desktop on a virtual machine.
-1. \# Install git; clone polisCode repo
-     * `sudo apt update; sudo apt install -y git`
-     * `git clone https://github.com/pol-is-trial-balloon/polisCode.git`
+1. \# You can go step by step, or, if you are feeling lucky, you can copy and paste this whole readme from a browser into a terminal. 
 1. \# Set environmental variables to be used below:
      * `POLIS_DATABASE_PASSWORD="postgres"`
      * `POLIS_DATABASE="polis-dev"`
      * `NVM_VERSION="v0.35.3"` # visit https://github.com/nvm-sh/nvm to confirm the latest version
+     * `POLIS_HOME="$HOME"`
+     * `POLIS_REPO="polisCode"`
+     * `GIT_HOME="https://github.com/pol-is-trial-balloon"`
+     * `GIT_BRANCH="crkrenn-dev-install-1"`
+1. \# Install git; clone repo
+     * `sudo apt update; sudo apt install -y git`
+     * `cd $POLIS_HOME`
+     * `git clone ${GIT_HOME}/${POLIS_REPO}.git`
+     * `cd ${POLIS_HOME}/${POLIS_REPO}`
+     * `git checkout $GIT_BRANCH`
 1. \# Install necessary apt packages
      * `sudo apt update`
      * `sudo apt install -y postgresql`
