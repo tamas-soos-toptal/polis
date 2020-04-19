@@ -26,6 +26,7 @@
      * `sudo apt install -y npm`
      * `sudo apt install -y curl`
      * `sudo apt install -y python` 
+     * `sudo apt install -y openjdk-8-jre-headless`
 1. \# Install additional (non-apt) packages
      * `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash`
 1. \# Verify the current versions of node
