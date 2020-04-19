@@ -1,0 +1,3 @@
+source .env_dev
+#lein trampoline run -m polismath.runner poller
+lein trampoline run -m polismath.runner full
