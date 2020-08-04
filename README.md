@@ -1,100 +1,65 @@
-# Polis
-pol.is an AI powered sentiment gathering platform. More organic than surveys, less effort than focus groups.
+# polismath
 
-<!-- Changes to badge text in URLs below, require changes to "name" value in .github/workflows/*.yml -->
-[![Nightly Docker Builds](https://github.com/pol-is/polisServer/workflows/Nightly%20Docker%20Builds/badge.svg)][nightlies]
-[![E2E Tests](https://github.com/pol-is/polisServer/workflows/E2E%20Tests/badge.svg)][e2e-tests]
-
-   [nightlies]: https://hub.docker.com/u/polisdemo
-   [e2e-tests]: https://github.com/pol-is/polisServer/actions?query=workflow%3A%22E2E+Tests%22
-
-## :construction: Disclaimer
-
-- The documentation and configuration in this code repository is **for development ONLY**,
-and emphatically **NOT intended for production deployment**.
-- We do NOT make guarantees of easy setup or management, push-button deployment, security,
-firm development timelines, technical support, future migration paths, data integrity,
-existence of bugs, or completeness of existing features.
-All of the above is actively in flux on `dev` branch.
-- Work in the issue queue and codebase is being done in part by passionate volunteer contributors.
-They will often be experimenting with unproven project infrastructure that is unsupported by the Polis organization,
-e.g. pre-built docker images.
-
-Having said this, we are enthusiastic about your support in moving toward deployment-readiness.
-We aspire to see future third-party deployments of polis as we cultivate a growing community of diverse contributors!
-We look forward to working together :tada:
-
-## 🙋🏾‍♀️ Get Involved
-
-1. Say hi in our **chat** [:speech_balloon:][chat] [`gitter.com/pol-is/polisDeployment`][chat]
-2. Join one of our weekly **open calls** :microphone:
-    - Please please please... Newcomers welcome! [Learn more...][calls-about]
-3. Visit our [**issue tracker**][issues] [:white_check_mark:][issues] to offer your skills & energies
-    - We also keep a [project kanban board][board] [:checkered_flag:][board]
-    - :ear: Pssssst! [Learn how...][contributing] (labels, etc.)
-
-   [chat]: https://gitter.im/pol-is/polisDeployment
-   [calls-about]: /CONTRIBUTING.md#telephone_receiver-open-calls
-   [issues]: https://github.com/pol-is/polisServer/issues
-   [board]: https://github.com/orgs/pol-is/projects/1
-   [contributing]: /CONTRIBUTING.md#how-we-work
-
-## 💻 Development
-
-Recommendations: Docker-Machine (on [DigitalOcean with 2GB memory][do-tut])
-
-   [do-tut]: https://www.digitalocean.com/community/tutorials/how-to-provision-and-manage-remote-docker-hosts-with-docker-machine-on-ubuntu-16-04
+The machine learning and data flow system powering pol.is.
 
 
-### Running with docker-compose:
+## Setup
 
-Before running docker-compose up for the first time,
-either do a pull (faster):
+The below instructions are no longer officially supported; if you'd like to use them as a reference, we suggest you check out the official [Dockerfile](Dockerfile) to understand the latest build process and specific package versions.
 
-`docker-compose pull`
+---
 
-or do a build (to utilize recent or local changes):
+To get running, you'll need to [install Leinengen](https://github.com/technomancy/leiningen) (v at least 2.0).
+From there, all clojure dependencies can be installed using `lein deps`.
+However, you'll also need the postgresql (client) installed (sudo `apt-get install postgresql postgresql-client` on ubuntu).
 
-`docker-compose up --build --detach`
 
-subsequently you should only need to run:
+## Configuration / Environment variables
 
-`docker-compose up --detach`
+There are a number of variables for tuning and tweaking the system, many of which are exposed via environment variables.
+The ones you're most frequently to need to tweak for one reason or another:
 
-To force a full re-build with no cache from previous builds:
-`docker-compose build --parallel --no-cache`
+* `MATH_ENV`: This defaults to `dev`, for local development environments.
+  Traditionally we've set this to `prod` and `preprod` for our production and pre-production deployments specifically.
+  This value is used in keying the math export json blobs as found in the `math_main` and other tables in the database.
+  This makes it possible to run multiple math environments (dev, testing, prod, preprod) all on the same database of votes.
+  When you start the math server, you will need to run it with the same `MATH_ENV` setting as you ran the math worker with.
+* `POLL_FROM_DAYS_AGO`: This defaults to 10 (at the time of this writing).
+  Conversations which have had vote or moderation activity in the specified range will be loaded into memory, and will be updated.
+  This prevents old inactive conversations from being loaded into memory every time the poller starts.
+  
+You'll also need to pass database credentials and such.
 
-And to stop:
-`docker-compose down`
+Please see [`src/polismath/components/config.clj`](https://github.com/pol-is/polisMath/blob/master/src/polismath/components/config.clj#L51) for the complete listing of environment variables.
 
-_(or Ctrl+C if you did not run with --detach)_
+* `DATABASE_URL`: url for the database, in heroku format: 
+  `postgres://<username>:<password>@<url>:<port>/<database-id>`
+* `WEBSERVER_PASS` & `WEBSERVER_USERNAME`, to the polisServer instance, primarily for uathenticated api calls to send
+  email notifications to users when their exports are done, via the polisServer.
+* `DATABASE_IGNORE_SSL` - certain database deployments (Docker in particular) may not accept ssl
 
-### check your ip (only necessary on docker-machine):
-```
-docker-machine ip
->>> 123.45.67.89
-```
 
-Visit your instance at: `http://123.45.67.89.xip.io/`
+## Dev setup
 
-Or visit a native docker instance at `http://localhost:80/`
+Once you have all that stuff set up, you can run `lein repl`.
+From there you can run `(run! system/poller-system)` to start the poller, and `(stop!)` to stop it.
 
-Sign up at `/createuser` path. You'll be logged in right away; no email validation required!
+This application uses Stuart Sierra's Component library for REPL-reloadability, and places the system in the `system` var.
+So if you need to access one of the components that gets passed through to some code in the application for testing, that's where you'll want to grab it.
+We'll soon be switching to Mount over Component, for more automated reloadability, and less hassle having to pass around and think about the system object to test things.
 
-**What features still need work?**
-- ~~Generated reports~~
-- Data export [`polis-issues#137`](https://github.com/pol-is/polis-issues/issues/137)
+To see some example REPL usage, take a look at the comment block at the [bottom of `dev/user.clj`](https://github.com/pol-is/polisMath/blob/master/dev/user.clj#L328).
 
-**Note:** Due to past file re-organizations, you may find the following git configuration helpful for looking at history:
+You can run tests using `lein test`.
+Since Clojure is slow to start though, you may find it easier to run the `runner/-main` function (see the `test` directory) from within your REPL process.
+There is an example of this in the `dev/user.clj` file above.
+There are rough units tests for most of the basic math things, and one or two higher level integration tests.
+Looking forward to setting up `clojure.spec` and some generative testing!
 
-```
-git config --local include.path ../.gitconfig
-```
+If you're not familiar with Clojure, you may wish to take a look at the Clojure related [wiki pages](https://github.com/pol-is/polisMath/wiki).
 
-## 🚀 Deployment
 
-Please see [`docs/deployment.md`](/docs/deployment.md)
+## Licensing
 
-## ©️  License
+Please see LICENSE
 
-[AGPLv3](/LICENSE)
