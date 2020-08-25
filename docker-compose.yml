@@ -13,7 +13,7 @@
 # to stop:
 # docker-compose down
 
-version: "3.1"
+version: "3.4"
 
 services:
   server:
@@ -28,8 +28,11 @@ services:
       - "file-server"
     networks:
       - "polis-dev"
+    volumes:
+      - "config:/config"
     ports:
       - "5000:5000"
+      # - "9229:9229"
 
   math:
     container_name: polis-math
@@ -42,6 +45,8 @@ services:
       dockerfile: math/Dockerfile
     networks:
       - "polis-dev"
+    volumes:
+      - "config:/config"
 
   postgres:
     container_name: polis-postgres
@@ -55,7 +60,10 @@ services:
       - "polis-dev"
     volumes:
       - "backups:/backups"
+      - "config:/config"
       - "postgres:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
 
   nginx-proxy:
     container_name: polis-nginx-proxy
@@ -67,6 +75,8 @@ services:
       - "server"
     networks:
       - "polis-dev"
+    volumes:
+      - "config:/config"
     ports:
       - "80:80"
       - "443:443"
@@ -83,6 +93,8 @@ services:
       - "client-report"
     networks:
       - "polis-dev"
+    volumes:
+      - "config:/config"
     ports:
       - "8080:8080"
 
@@ -112,7 +124,7 @@ services:
       dockerfile: client-report/Dockerfile    
       args:
         GIT_HASH: "${GIT_HASH}"
-
+  
   maildev:
     image: maildev/maildev:1.1.0
     networks:
@@ -122,6 +134,17 @@ services:
       - "1080:80"
       # SMTP port
       - "25:25"
+  
+  config:
+    container_name: polis-config
+    image: polisdemo/config:dev
+    build:
+      context: .
+      dockerfile: config/Dockerfile
+      args:
+        GIT_HASH: "${GIT_HASH}"
+    volumes:
+      - "config:/app/config"
 
 networks:
   polis-dev:
@@ -129,3 +152,6 @@ networks:
 volumes:
   backups:
   postgres:
+  config:
+    # We hardcode this machine name so it won't vary depending on git dir name.
+    name: polis_config
