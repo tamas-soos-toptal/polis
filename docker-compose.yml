@@ -150,7 +150,7 @@ services:
       args:
         GIT_HASH: "${GIT_HASH}"
     volumes:
-      - "config:/app/config"
+      - "config:/config"
 
 networks:
   polis-dev:

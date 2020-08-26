@@ -1,6 +1,7 @@
 FROM node:14.8.0-alpine
 
-WORKDIR /app
+ENV POLIS_ROOT=/
+WORKDIR ${POLIS_ROOT}app
 
 RUN apk add postgresql-dev
 

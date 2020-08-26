@@ -2,7 +2,9 @@
 
 "use strict";
 
-var config = require('./config/config.js');
+let POLIS_ROOT = process.env.POLIS_ROOT
+
+var config = require(POLIS_ROOT + '/config/config.js');
 const fs = require('fs');
 
 console.log('export_config aws_region:' + config.get('aws_region'));

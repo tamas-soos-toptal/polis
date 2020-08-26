@@ -2,11 +2,12 @@
 
 "use strict";
 
+let POLIS_ROOT = process.env.POLIS_ROOT
+
 // the next line only works with docker-compose
-var config = require('/config/config.js');
+var config = require(POLIS_ROOT + 'config/config.js');
 
 console.log('server aws_region:' + config.get('aws_region'));
-
 
 // keep these lines to help with debugging conversion
 // from process.env to config.get
