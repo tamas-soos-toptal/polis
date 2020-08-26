@@ -99,7 +99,7 @@ const SQL = require('./db/sql');
 // # Slack setup
 
 var WebClient = require('@slack/client').WebClient;
-var web = new WebClient(process.env.SLACK_API_TOKEN);
+var web = new WebClient(config.get('slack_api_token'));
 // const winston = require("winston");
 // # notifications
 const winston = console;
@@ -108,7 +108,8 @@ const sendTextEmail = emailSenders.sendTextEmail;
 const sendTextEmailWithBackupOnly = emailSenders.sendTextEmailWithBackupOnly;
 
 const resolveWith = (x) => { return Promise.resolve(x);};
-const intercomClient = !isTrue(process.env.DISABLE_INTERCOM) ? new IntercomOfficial.Client({'token': process.env.INTERCOM_ACCESS_TOKEN}) : {
+const intercomClient = !isTrue(config.get('disable_intercom')) ? new IntercomOfficial.Client(
+  {'token': config.get('intercom_access_token')}) : {
   leads: {
     create: resolveWith({body: {user_id: "null_intercom_user_id"}}),
     update: resolveWith({}),
