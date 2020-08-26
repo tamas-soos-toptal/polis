@@ -162,12 +162,15 @@ Promise.onPossiblyUnhandledRejection(function(err) {
   // throw err; // not throwing since we're printing stack traces anyway
 });
 
-const adminEmailDataExport = process.env.ADMIN_EMAIL_DATA_EXPORT || ""
-const adminEmailDataExportTest = process.env.ADMIN_EMAIL_DATA_EXPORT_TEST || ""
-const adminEmailEmailTest = process.env.ADMIN_EMAIL_EMAIL_TEST || ""
 
-const admin_emails = process.env.ADMIN_EMAILS ? JSON.parse(process.env.ADMIN_EMAILS) : [];
-const polisDevs = process.env.ADMIN_UIDS ? JSON.parse(process.env.ADMIN_UIDS) : [];
+const adminEmailDataExport = config.get('admin_email_data_export');
+const adminEmailDataExportTest = config.get('admin_email_data_export_test');
+const adminEmailEmailTest = config.get('admin_email_email_test');
+
+const admin_emails = config.get('admin_emails');
+const polisDevs = config.get('admin_uids');
+
+
 function isPolisDev(uid) {
   console.log("polisDevs", polisDevs)
   return polisDevs.indexOf(uid) >= 0;
@@ -204,11 +207,13 @@ setInterval(function() {
 //   state: '3(#0/!~'
 // });
 // // END GITHUB OAUTH2
-const POLIS_FROM_ADDRESS = process.env.POLIS_FROM_ADDRESS;
+
+
+const POLIS_FROM_ADDRESS = config.get('polis_from_address');
 
 const akismet = akismetLib.client({
-  blog: 'https://pol.is', // required: your root level url
-  apiKey: process.env.AKISMET_ANTISPAM_API_KEY,
+  blog: config.get('akismet_root_url'), // required: your root level url
+  apiKey: config.get('akismet_antispam_api_key')
 });
 
 akismet.verifyKey(function(err, verified) {
@@ -272,8 +277,7 @@ DD.prototype.s = DA.prototype.s = function(k, v) {
 //   return [];
 // }
 
-const domainOverride = Config.domainOverride;
-
+const domainOverride = config.get('domain_override');
 function haltOnTimeout(req, res, next) {
   if (req.timedout) {
     fail(res, 500, "polis_err_timeout_misc");
@@ -595,7 +599,8 @@ function initializePolisHelpers() {
 
   const detectLanguage = Comment.detectLanguage;
 
-  if (isTrue(process.env.BACKFILL_COMMENT_LANG_DETECTION)) {
+
+  if (isTrue(config.get('backfill_comment_lang_detection'))) {
     pgQueryP("select tid, txt, zid from comments where lang is null;", []).then((comments) => {
       let i = 0;
       function doNext() {
@@ -1046,14 +1051,14 @@ function initializePolisHelpers() {
 
   let whitelistedDomains = [
     "pol.is",
-    process.env.DOMAIN_WHITELIST_ITEM_01,
-    process.env.DOMAIN_WHITELIST_ITEM_02,
-    process.env.DOMAIN_WHITELIST_ITEM_03,
-    process.env.DOMAIN_WHITELIST_ITEM_04,
-    process.env.DOMAIN_WHITELIST_ITEM_05,
-    process.env.DOMAIN_WHITELIST_ITEM_06,
-    process.env.DOMAIN_WHITELIST_ITEM_07,
-    process.env.DOMAIN_WHITELIST_ITEM_08,
+    config.get('domain_whitelist_item_01'),
+    config.get('domain_whitelist_item_02'),
+    config.get('domain_whitelist_item_03'),
+    config.get('domain_whitelist_item_04'),
+    config.get('domain_whitelist_item_05'),
+    config.get('domain_whitelist_item_06'),
+    config.get('domain_whitelist_item_07'),
+    config.get('domain_whitelist_item_08'),
     "localhost:5001",
     "localhost:5002",
     "canvas.instructure.com", // LTI
@@ -1210,7 +1215,9 @@ function initializePolisHelpers() {
     }
     res.status(200).json({});
   }
-  let pcaCacheSize = (process.env.CACHE_MATH_RESULTS === "true") ? 300 : 1;
+
+
+  let pcaCacheSize = isTrue(config.get('cache_math_results')) ? 300 : 1;
   let pcaCache = new LruCache({
     max: pcaCacheSize,
   });
@@ -1469,14 +1476,16 @@ function initializePolisHelpers() {
 
     let queryStart = Date.now();
 
-    return pgQueryP_readOnly("select * from math_main where zid = ($1) and math_env = ($2);", [zid, process.env.MATH_ENV]).then((rows) => {
+    return pgQueryP_readOnly("select * from math_main where zid = ($1) and math_env = ($2);", 
+      [zid, config.get('math_env')]).then((rows) => {
 
       let queryEnd = Date.now();
       let queryDuration = queryEnd - queryStart;
       addInRamMetric("pcaGetQuery", queryDuration);
 
       if (!rows || !rows.length) {
-        INFO("mathpoll related; after cache miss, unable to find data for", {zid, math_tick, math_env: process.env.MATH_ENV});
+        INFO("mathpoll related; after cache miss, unable to find data for", {zid, math_tick, 
+          math_env: config.get('math_env')});
         return null;
       }
       let item = rows[0].data;
@@ -1630,7 +1639,7 @@ function initializePolisHelpers() {
   function handle_POST_math_update(req, res) {
     let zid = req.p.zid;
     let uid = req.p.uid;
-    let math_env = process.env.MATH_ENV;
+    let math_env = config.get('math_env');
     let math_update_type = req.p.math_update_type;
 
     isModerator(zid, uid).then((hasPermission) => {
@@ -1654,7 +1663,7 @@ function initializePolisHelpers() {
 
   function handle_GET_math_correlationMatrix(req, res) {
     let rid = req.p.rid;
-    let math_env = process.env.MATH_ENV;
+    let math_env = config.get('math_env');
     let math_tick = req.p.math_tick;
 
     console.log(req.p);
@@ -1731,7 +1740,9 @@ function initializePolisHelpers() {
       task_bucket, // TODO hash the params to get a consistent number?
     ]);
   }
-  if (process.env.RUN_PERIODIC_EXPORT_TESTS && !devMode && process.env.MATH_ENV === "preprod") {
+
+
+  if (isTrue(config.get('run_periodic_export_tests')) && !devMode && config.get('math_env') === "preprod") {
     let runExportTest = () => {
       let math_env = "prod";
       let email = adminEmailDataExportTest;
@@ -1763,7 +1774,7 @@ function initializePolisHelpers() {
     getUserInfoForUid2(req.p.uid).then((user) => {
 
       return doAddDataExportTask(
-        process.env.MATH_ENV,
+        config.get('math_env'),
         user.email,
         req.p.zid,
         req.p.unixTimestamp * 1000,
@@ -1782,7 +1793,7 @@ function initializePolisHelpers() {
 
     var url = s3Client.getSignedUrl('getObject', {
       Bucket: 'polis-datadump',
-      Key: process.env.MATH_ENV + "/" + req.p.filename,
+      Key: config.get('math_env') + "/" + req.p.filename,
       Expires: 60*60*24*7,
     });
     res.redirect(url);
@@ -1794,7 +1805,7 @@ function initializePolisHelpers() {
   }
   function getBidIndexToPidMapping(zid, math_tick) {
     math_tick = math_tick || -1;
-    return pgQueryP_readOnly("select * from math_bidtopid where zid = ($1) and math_env = ($2);", [zid, process.env.MATH_ENV]).then((rows) => {
+    return pgQueryP_readOnly("select * from math_bidtopid where zid = ($1) and math_env = ($2);", [zid,  config.get('math_env')]).then((rows) => {
 
       if (zid === 12480) {
         console.log("bidToPid", rows[0].data);
@@ -2004,11 +2015,11 @@ function initializePolisHelpers() {
     // const state = req.p.state;
     console.log("handle_POST_auth_slack_redirect_uri 1");
 
-    console.log(process.env.POLIS_SLACK_APP_CLIENT_ID);
+    console.log(config.get('polis_slack_app_client_id'));
 
     request.get("https://slack.com/api/oauth.access?" + querystring.stringify({
-      client_id: process.env.POLIS_SLACK_APP_CLIENT_ID,
-      client_secret: process.env.POLIS_SLACK_APP_CLIENT_SECRET,
+      client_id: config.get('polis_slack_app_client_id'),
+      client_secret: config.get('polis_slack_app_client_secret'),
       code: code,
       redirect_uri:  getServerNameWithProtocol(req) + "/api/v3/auth/slack/redirect_uri",
     }))
