@@ -18,7 +18,10 @@ const Config = require('./config');
 
 const akismetLib = require('akismet');
 const AWS = require('aws-sdk');
-AWS.config.set('region', process.env.AWS_REGION);
+AWS.config.set('region', config.get('aws_region'));
+AWS.config.set('accessKeyId', config.get('aws_access_key_id'));
+AWS.config.set('secretAccessKey', config.get('aws_secret_access_key'));
+
 const badwords = require('badwords/object');
 const Promise = require('bluebird');
 const http = require('http');
@@ -43,12 +46,12 @@ const OAuth = require('oauth');
 // });
 // const postmark = require("postmark")(process.env.POSTMARK_API_KEY);
 const querystring = require('querystring');
-const devMode = isTrue(process.env.DEV_MODE);
+const devMode = isTrue(config.get('dev_mode'));
 const replaceStream = require('replacestream');
 const responseTime = require('response-time');
 const request = require('request-promise'); // includes Request, but adds promise methods
-const s3Client = new AWS.S3({apiVersion: '2006-03-01'});
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const s3Client = new AWS.S3({apiVersion: config.get('aws_s3_api_version')});
+const stripe = require("stripe")(config.get('stripe_secret_key'));
 const LruCache = require("lru-cache");
 const timeout = require('connect-timeout');
 const zlib = require('zlib');
