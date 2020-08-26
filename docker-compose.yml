@@ -30,8 +30,10 @@ services:
       - "polis-dev"
     volumes:
       - "config:/config"
-    ports:
-      - "5000:5000"
+    # close external ports by default
+    # ports:
+      # - "5000:5000"
+      # for connecting a debugger
       # - "9229:9229"
 
   math:
@@ -62,8 +64,9 @@ services:
       - "backups:/backups"
       - "config:/config"
       - "postgres:/var/lib/postgresql/data"
-    ports:
-      - "5432:5432"
+    # close external ports by default
+    #ports:
+      #- "5432:5432"
 
   nginx-proxy:
     container_name: polis-nginx-proxy
@@ -95,8 +98,9 @@ services:
       - "polis-dev"
     volumes:
       - "config:/config"
-    ports:
-      - "8080:8080"
+    # close external ports by default
+    # ports:
+      #- "8080:8080"
 
   client-participation:
     container_name: polis-client-participation
@@ -129,11 +133,13 @@ services:
     image: maildev/maildev:1.1.0
     networks:
       - "polis-dev"
+    # close external ports by default
+    # but, 1080 is needed for cypress testing
     ports:
       # User interface
       - "1080:80"
       # SMTP port
-      - "25:25"
+      # - "25:25"
   
   config:
     container_name: polis-config
