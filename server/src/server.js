@@ -2,6 +2,16 @@
 
 "use strict";
 
+var config = require('./config/config.js');
+
+console.log('server aws_region:' + config.get('aws_region'));
+
+
+// keep these lines to help with debugging conversion
+// from process.env to config.get
+// console.log("process.env >>"+process.env.GOOGLE_API_KEY+"<<")
+// console.log("config.get >>"+config.get('google_api_key')+"<<")
+
 const Config = require('./config');
 
 const akismetLib = require('akismet');
