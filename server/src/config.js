@@ -1,6 +1,6 @@
-const devMode = require('boolean')(get('DEV_MODE'));
+const devMode = isTrue(config.get('dev_mode'));
 
-const domainOverride = process.env.DOMAIN_OVERRIDE || null;
+const domainOverride = config.get('domain_override');
 
 function getServerNameWithProtocol(req) {
   let server = "https://pol.is";

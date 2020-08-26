@@ -4,7 +4,7 @@ const pg = require('./db/pg-query');
 
 function encrypt(text) {
   const algorithm = 'aes-256-ctr';
-  const password = process.env.ENCRYPTION_PASSWORD_00001;
+  const password = config.get('encryption_password_00001');
   const cipher = crypto.createCipher(algorithm, password);
   var crypted = cipher.update(text,'utf8','hex');
   crypted += cipher.final('hex');
@@ -13,7 +13,7 @@ function encrypt(text) {
 
 function decrypt(text) {
   const algorithm = 'aes-256-ctr';
-  const password = process.env.ENCRYPTION_PASSWORD_00001;
+  const password = config.get('encryption_password_00001');
   const decipher = crypto.createDecipher(algorithm, password);
   var dec = decipher.update(text,'hex','utf8');
   dec += decipher.final('utf8');
