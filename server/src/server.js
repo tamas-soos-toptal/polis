@@ -11479,7 +11479,9 @@ CREATE TABLE slack_user_invites (
     //     // });
     //     getStaticFile("./unsupportedBrowser.html", res);
     // } else {
-    let port = process.env.STATIC_FILES_PORT;
+
+
+    let port = config.get('static_files_port');
     // set the host header too, since S3 will look at that (or the routing proxy will patch up the request.. not sure which)
     req.headers.host = hostname;
     routingProxy.proxyRequest(req, res, {
@@ -11492,13 +11494,13 @@ CREATE TABLE slack_user_invites (
 
   function buildStaticHostname(req, res) {
     if (devMode || domainOverride) {
-      return process.env.STATIC_FILES_HOST;
+      return config.get('static_files_host');
     } else {
       let origin = req.headers.host;
       if (!whitelistedBuckets[origin]) {
         if (hasWhitelistMatches(origin)) {
           // Use the prod bucket for non pol.is domains
-          return whitelistedBuckets["pol.is"] + "." + process.env.STATIC_FILES_HOST;
+          return whitelistedBuckets["pol.is"] + "." + config.get('static_files_host');
         } else {
           console.error("got request with host that's not whitelisted: (" + req.headers.host + ")");
           return;
@@ -11506,7 +11508,7 @@ CREATE TABLE slack_user_invites (
 
       }
       origin = whitelistedBuckets[origin];
-      return origin + "." + process.env.STATIC_FILES_HOST;
+      return origin + "." + config.get('static_files_host');
     }
   }
 
@@ -11621,9 +11623,11 @@ CREATE TABLE slack_user_invites (
   }
 
   // serve up index.html in response to anything starting with a number
-  let hostname = process.env.STATIC_FILES_HOST;
-  let portForParticipationFiles = process.env.STATIC_FILES_PORT;
-  let portForAdminFiles = process.env.STATIC_FILES_ADMINDASH_PORT;
+  let hostname = config.get('static_files_host');
+  let portForParticipationFiles = config.get('static_files_port');
+  let portForAdminFiles = config.get('static_files_admindash_port');
+
+
   let fetchUnsupportedBrowserPage = makeFileFetcher(hostname, portForParticipationFiles, "/unsupportedBrowser.html", {
     'Content-Type': "text/html",
   });
