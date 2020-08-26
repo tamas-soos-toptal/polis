@@ -13,7 +13,7 @@ const Translate = require('@google-cloud/translate');
 const isTrue = require('boolean');
 const Utils = require('./utils/common');
 
-const useTranslateApi = isTrue(config.get('should_use_translation_api');
+const useTranslateApi = isTrue(config.get('should_use_translation_api'));
 let translateClient = null;
 if (useTranslateApi) {
   // Tell translation library where to find credentials, and write them to disk.
