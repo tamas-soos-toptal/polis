@@ -2690,8 +2690,8 @@ Feel free to reply to this email if you need help.`;
     return pgQueryP("update participants set last_interaction = now_as_millis(), nsli = 0 where zid = ($1) and uid = ($2);", [zid, uid]);
   }
   function populateGeoIpInfo(zid, uid, ipAddress) {
-    var userId = process.env.MAXMIND_USERID;
-    var licenseKey = process.env.MAXMIND_LICENSEKEY;
+    var userId = config.get('maxmind_userid');
+    var licenseKey = config.get('maxmind_licensekey');
 
     var url = "https://geoip.maxmind.com/geoip/v2.1/city/";
     var contentType = "application/vnd.maxmind.com-city+json; charset=UTF-8; version=2.1";
@@ -3556,7 +3556,7 @@ Email verified! You can close this tab or hit the back button.
 
     let server = "http://localhost:5000";
     if (!devMode) {
-      server = "https://" + process.env.PRIMARY_POLIS_URL;
+      server = "https://" + config.get('primary_polis_url');
     }
     return server + "/" + path + "?" + paramsToStringSortedByName(params);
   }
@@ -3571,7 +3571,7 @@ Email verified! You can close this tab or hit the back button.
 
     let server = "http://localhost:5000";
     if (!devMode) {
-      server = "https://" + process.env.PRIMARY_POLIS_URL;
+      server = "https://" + config.get('primary_polis_url');
     }
     return server + "/" + path + "?" + paramsToStringSortedByName(params);
   }
@@ -8023,7 +8023,7 @@ Email verified! You can close this tab or hit the back button.
     res.send("https://pol.is/settings/enterprise/" + encodeParams(o));
   }
   function handle_GET_stripe_account_connect(req, res) {
-    var stripe_client_id = process.env.STRIPE_CLIENT_ID;
+    var stripe_client_id = config.get('stripe_client_id');
 
     var stripeUrl = "https://connect.stripe.com/oauth/authorize?response_type=code&client_id=" + stripe_client_id + "&scope=read_write";
     res.set({
@@ -8048,9 +8048,9 @@ Email verified! You can close this tab or hit the back button.
       url: 'https://connect.stripe.com/oauth/token',
       form: {
         grant_type: 'authorization_code',
-        client_id: process.env.STRIPE_CLIENT_ID,
+        client_id: config.get('stripe_client_id'),
         code: code,
-        client_secret: process.env.STRIPE_SECRET_KEY,
+        client_secret: config.get('stripe_secret_key'),
       },
     }, function(err, r, body) {
       if (err) {
@@ -8315,7 +8315,8 @@ Email verified! You can close this tab or hit the back button.
   }
 
   function handle_POST_notifyTeam(req, res) {
-    if (req.p.webserver_pass !== process.env.WEBSERVER_PASS || req.p.webserver_username !== process.env.WEBSERVER_USERNAME) {
+    if (req.p.webserver_pass !== config.get('webserver_pass') || 
+        req.p.webserver_username !== config.get('webserver_username')) {
       return fail(res, 403, "polis_err_notifyTeam_auth");
     }
     let subject = req.p.subject;
@@ -8329,11 +8330,12 @@ Email verified! You can close this tab or hit the back button.
 
   function handle_POST_sendEmailExportReady(req, res) {
 
-    if (req.p.webserver_pass !== process.env.WEBSERVER_PASS || req.p.webserver_username !== process.env.WEBSERVER_USERNAME) {
+    if (req.p.webserver_pass !== config.get('webserver_pass') || 
+        req.p.webserver_username !== config.get('webserver_username')) {
       return fail(res, 403, "polis_err_sending_export_link_to_email_auth");
     }
 
-    const domain = process.env.PRIMARY_POLIS_URL;
+    const domain = config.get('primary_polis_url');
     const email = req.p.email;
     const subject = "Polis data export for conversation pol.is/" + req.p.conversation_id;
     const fromAddress = `Polis Team <${adminEmailDataExport}>`;
@@ -8371,8 +8373,8 @@ Thanks for using Polis!
     let oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token', // null
       'https://api.twitter.com/oauth/access_token', // null
-      process.env.TWITTER_CONSUMER_KEY, //'your application consumer key',
-      process.env.TWITTER_CONSUMER_SECRET, //'your application secret',
+      config.get('twitter_consumer_key'), //'your application consumer key',
+      config.get('twitter_consumer_secret'), //'your application secret',
       '1.0A',
       null,
       'HMAC-SHA1'
@@ -8419,8 +8421,8 @@ Thanks for using Polis!
     let oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token', // null
       'https://api.twitter.com/oauth/access_token', // null
-      process.env.TWITTER_CONSUMER_KEY, //'your application consumer key',
-      process.env.TWITTER_CONSUMER_SECRET, //'your application secret',
+      config.get('twitter_consumer_key'), //'your application consumer key',
+      config.get('twitter_consumer_secret'), //'your application secret',
       '1.0A',
       null,
       'HMAC-SHA1'
@@ -8471,8 +8473,8 @@ Thanks for using Polis!
     let oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token', // null
       'https://api.twitter.com/oauth/access_token', // null
-      process.env.TWITTER_CONSUMER_KEY, //'your application consumer key',
-      process.env.TWITTER_CONSUMER_SECRET, //'your application secret',
+      config.get('twitter_consumer_key'), //'your application consumer key',
+      config.get('twitter_consumer_secret'), //'your application secret',
       '1.0A',
       null,
       'HMAC-SHA1'
@@ -8511,8 +8513,8 @@ Thanks for using Polis!
     let oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token', // null
       'https://api.twitter.com/oauth/access_token', // null
-      process.env.TWITTER_CONSUMER_KEY, //'your application consumer key',
-      process.env.TWITTER_CONSUMER_SECRET, //'your application secret',
+      config.get('twitter_consumer_key'), //'your application consumer key',
+      config.get('twitter_consumer_secret'), //'your application secret',
       '1.0A',
       null,
       'HMAC-SHA1'
@@ -8581,8 +8583,8 @@ Thanks for using Polis!
     let oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token', // null
       'https://api.twitter.com/oauth/access_token', // null
-      process.env.TWITTER_CONSUMER_KEY, //'your application consumer key',
-      process.env.TWITTER_CONSUMER_SECRET, //'your application secret',
+      config.get('twitter_consumer_key'), //'your application consumer key',
+      config.get('twitter_consumer_secret'), //'your application secret',
       '1.0A',
       null,
       'HMAC-SHA1'
@@ -9358,7 +9360,7 @@ Thanks for using Polis!
   }
 
   function geoCodeWithGoogleApi(locationString) {
-    let googleApiKey = process.env.GOOGLE_API_KEY;
+    let googleApiKey = config.get('google_api_key');
     let address = encodeURI(locationString);
 
     return new Promise(function(resolve, reject) {
@@ -11453,7 +11455,7 @@ CREATE TABLE slack_user_invites (
     if (!hostname) {
 
       let host = req.headers.host || "";
-      let re = new RegExp(process.env.SERVICE_HOSTNAME + "$");
+      let re = new RegExp(config.get('service_hostname') + "$");
       if (host.match(re)) {
         // don't alert for this, it's probably DNS related
         // TODO_SEO what should we return?
