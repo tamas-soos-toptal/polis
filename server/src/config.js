@@ -1,3 +1,7 @@
+let POLIS_ROOT = process.env.POLIS_ROOT
+var config = require(POLIS_ROOT + 'config/config.js');
+console.log('server aws_region:' + config.get('aws_region'));
+
 const isTrue = require('boolean');
 
 const devMode = isTrue(config.get('dev_mode'));
