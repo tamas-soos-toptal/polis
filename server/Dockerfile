@@ -8,6 +8,10 @@ RUN apk add --no-cache --virtual .build \
   g++ git make python
 
 COPY server/package*.json ./
+
+# needed for /config/config.js
+ENV NODE_PATH=/app/node_modules
+
 # TODO get `npm ci` to work
 RUN npm install
 

@@ -14,7 +14,8 @@ convict.addParser({ extension: ['yml', 'yaml'], parse: yaml.safeLoad });
 // Define a schema
 
 try {
-    let fileContents = fs.readFileSync('./config/schema.yaml', 'utf8');
+    // the next line only works with docker-compose
+    let fileContents = fs.readFileSync('/config/schema.yaml', 'utf8');
     let schema = yaml.safeLoad(fileContents);
     var config = convict(schema);    
 } catch (e) {
@@ -25,10 +26,10 @@ console.log('default aws_region:' + config.get('aws_region'));
 
 // Load environment dependent configuration
 var env = config.get('env');
-config.loadFile('./config/' + env + '.yaml');
+config.loadFile('/config/' + env + '.yaml');
 console.log(env + ' aws_region:' + config.get('aws_region'));
 
-const path = './config/config_private.yaml';
+const path = '/config/config_private.yaml';
 
 try {
   if (fs.existsSync(path)) {
