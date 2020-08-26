@@ -1,3 +1,5 @@
+const isTrue = require('boolean');
+
 const devMode = isTrue(config.get('dev_mode'));
 
 const domainOverride = config.get('domain_override');
