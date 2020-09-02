@@ -22,7 +22,7 @@ services:
     image: polisdemo/server:dev
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: Dockerfile-server
     depends_on:
       - "postgres"
       - "file-server"
@@ -44,7 +44,7 @@ services:
       - "postgres"
     build:
       context: .
-      dockerfile: math/Dockerfile
+      dockerfile: Dockerfile-math
     networks:
       - "polis-dev"
     volumes:
@@ -57,7 +57,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: server/Dockerfile-db
+      dockerfile: Dockerfile-db
     networks:
       - "polis-dev"
     volumes:
@@ -73,7 +73,7 @@ services:
     image: polisdemo/nginx-proxy:dev
     build:
       context: .
-      dockerfile: file-server/nginx.Dockerfile
+      dockerfile: Dockerfile-nginx
     depends_on:
       - "server"
     networks:
@@ -89,7 +89,7 @@ services:
     image: polisdemo/file-server:dev
     build:
       context: .
-      dockerfile: file-server/Dockerfile
+      dockerfile: Dockerfile-file-server
     depends_on:
       - "client-participation"
       - "client-admin"
@@ -107,7 +107,7 @@ services:
     image: polisdemo/client-participation:dev
     build:
       context: .
-      dockerfile: client-participation/Dockerfile
+      dockerfile: Dockerfile-client-participation
       args:
         GIT_HASH: "${GIT_HASH}"
 
@@ -116,7 +116,7 @@ services:
     image: polisdemo/client-admin:dev
     build:
       context: .
-      dockerfile: client-admin/Dockerfile   
+      dockerfile: Dockerfile-client-admin   
       args:
         GIT_HASH: "${GIT_HASH}"
 
@@ -125,7 +125,7 @@ services:
     image: polisdemo/client-report:dev
     build:
       context: .
-      dockerfile: client-report/Dockerfile    
+      dockerfile: Dockerfile-client-report    
       args:
         GIT_HASH: "${GIT_HASH}"
   
@@ -146,7 +146,7 @@ services:
     image: polisdemo/config:dev
     build:
       context: .
-      dockerfile: config/Dockerfile
+      dockerfile: Dockerfile-config
       args:
         GIT_HASH: "${GIT_HASH}"
     volumes:
