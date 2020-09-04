@@ -1,4 +1,4 @@
-.PHONY: start start-debug stop clean
+.PHONY: start start-debug stop clean test
 
 # $SUDO is an optional shell variable which can be set to "sudo" if needed
 # (for example, on an ec2 instance)
@@ -24,4 +24,8 @@ clean:
 	@echo 'docker system prune --volumes -f'
 	@echo 'echo done'
 
+test:
+	# change to 'npm run test' after merge with master
+	@echo "--- Running 'npm run headless'"
+	cd e2e; npm run headless
 
