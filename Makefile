@@ -1,7 +1,15 @@
-.PHONY: start start-debug stop clean test
+.PHONY: start start-debug stop clean test help
 
 # $SUDO is an optional shell variable which can be set to "sudo" if needed
 # (for example, on an ec2 instance)
+
+help:
+	@echo "help 		--- Show this list."
+	@echo "start 		--- Run 'docker-compose up --build -d'."
+	@echo "start-debug 	--- Run 'docker-compose --log-level DEBUG --verbose up --build -d'."
+	@echo "stop 		--- Run 'docker-compose kill/rm/prune'."
+	@echo "clean 		--- Remove all docker files and history."
+	@echo "test 		--- Run 'npm run headless'."
 
 start:
 	@echo "--- Running 'docker-compose up --build -d'..."
