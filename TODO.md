@@ -1,3 +1,5 @@
+* fix bugs in email/senders.js vs senders_convict_wip.js
+
 * figure out GOOGLE_APP_CREDS in server/src/comment.js
 
 crkrenn@CRK-dGPS-MacBook-Pro --- source/polisServer ‹debug/node-convict-2* M?› » 
