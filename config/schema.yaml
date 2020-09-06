@@ -244,6 +244,7 @@ mailgun_api_key:
   doc: mailgun_api_key
   default: undefined
   env: MAILGUN_API_KEY
+  
 aws_ses_api_version:
   doc: aws_s3_api_version
   default: 2010-12-01
@@ -317,4 +318,10 @@ port:
   default: 5000
   env: PORT
 
+# Options: maildev, aws-ses, mailgun
+# Example: `aws-ses,mailgun` would try sending via AWS SES first, and fallback to Mailgun on error.
+email_transport_types:
+  doc: email_transport_types ex. maildev, aws-ses, mailgun
+  default: maildev
+  env: EMAIL_TRANSPORT_TYPES
 

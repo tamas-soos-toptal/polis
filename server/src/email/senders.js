@@ -1,10 +1,15 @@
 // Copyright (C) 2012-present, The Authors. This program is free software: you can redistribute it and/or  modify it under the terms of the GNU Affero General Public License, version 3, as published by the Free Software Foundation. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 "use strict"
 
+let POLIS_ROOT = process.env.POLIS_ROOT
+var config = require(POLIS_ROOT + 'config/config.js');
+var now = new Date(); 
+console.log('server aws_region:' + config.get('aws_region') + " @ " + now.toUTCString());
+
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const AWS = require('aws-sdk');
-AWS.config.set('region', process.env.AWS_REGION);
+AWS.config.set('region', config.get('aws_region'));
 
 function sendTextEmailWithBackup(sender, recipient, subject, text) {
   const transportTypes = process.env.EMAIL_TRANSPORT_TYPES

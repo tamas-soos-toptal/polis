@@ -33,7 +33,8 @@ console.log('default aws_region:' + config.get('aws_region'));
 // Load environment dependent configuration
 var env = config.get('env');
 config.loadFile(POLIS_ROOT + 'config/' + env + '.yaml');
-console.log(env + ' aws_region:' + config.get('aws_region'));
+var now = new Date(); 
+console.log('config aws_region:' + config.get('aws_region') + " @ " + now.toUTCString());
 
 const path = POLIS_ROOT + 'config/config_private.yaml';
 
