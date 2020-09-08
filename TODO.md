@@ -1,3 +1,5 @@
+* working on client-admin/dev-server
+
 * remove "get" functions from server/config.js
 
 * figure out GOOGLE_APP_CREDS in server/src/comment.js
