@@ -1,4 +1,4 @@
-* fix bugs in email/senders.js vs senders_convict_wip.js
+* remove "get" functions from server/config.js
 
 * figure out GOOGLE_APP_CREDS in server/src/comment.js
 

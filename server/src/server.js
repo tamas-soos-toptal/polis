@@ -4,8 +4,6 @@
 
 let POLIS_ROOT = process.env.POLIS_ROOT
 var config = require(POLIS_ROOT + 'config/config.js');
-var now = new Date(); 
-console.log('server3 aws_region:' + config.get('aws_region') + " @ " + now.toUTCString());
 
 // keep these lines to help with debugging conversion
 // from process.env to config.get
