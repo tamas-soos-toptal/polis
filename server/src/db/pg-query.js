@@ -1,4 +1,4 @@
-var config = require('./config/config.js');
+var config = require('/app/config/config.js');
 
 const _ = require('underscore');
 const Config = require('../config');
