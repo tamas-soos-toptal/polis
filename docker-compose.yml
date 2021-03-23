@@ -15,12 +15,16 @@
 # to stop:
 # docker-compose down
 
+## TODO: add config container
+
 version: "3.1"
 
 services:
   server:
     container_name: polis-server
     env_file: ./server/docker-dev.env
+    environment:
+      - POLIS_ROOT=/app/
     image: polisdemo/server:dev
     build:
       context: .
@@ -31,7 +35,7 @@ services:
     networks:
       - "polis-dev"
     volumes:
-      - "config:/config"
+      - "config:/app/config"
     ports:
       - "5000:5000"
 
