@@ -13,15 +13,15 @@ RUN npm config set unsafe-perm true
 # See: https://stackoverflow.com/a/56134858/504018
 RUN npm install -g npm@6.9.2
 
-COPY package*.json ./
+COPY client-participation/package*.json ./
 
 RUN npm ci
 
 RUN apk del .build
 
-COPY polis.config.template.js polis.config.js
+COPY client-participation/polis.config.template.js polis.config.js
 # If polis.config.js exists on host, will override template here.
-COPY . .
+COPY client-participation/ ./
 
 ARG GIT_HASH
 RUN npm run build:preprod

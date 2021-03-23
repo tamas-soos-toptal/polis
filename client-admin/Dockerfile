@@ -5,12 +5,12 @@ WORKDIR /app
 
 RUN apk add git --no-cache
 
-COPY package*.json ./
+COPY client-admin/package*.json ./
 RUN npm install
 
-COPY polis.config.template.js polis.config.js
+COPY client-admin/polis.config.template.js polis.config.js
 # If polis.config.js exists on host, will override template here.
-COPY . .
+COPY client-admin/ ./
 
 ARG GIT_HASH
 RUN npm run build:preprod
