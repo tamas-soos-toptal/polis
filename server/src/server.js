@@ -42,12 +42,12 @@ const OAuth = require('oauth');
 // });
 // const postmark = require("postmark")(process.env.POSTMARK_API_KEY);
 const querystring = require('querystring');
-const devMode = isTrue(process.env.DEV_MODE);
+const devMode = isTrue(config.get('dev_mode'));
 const replaceStream = require('replacestream');
 const responseTime = require('response-time');
 const request = require('request-promise'); // includes Request, but adds promise methods
-const s3Client = new AWS.S3({apiVersion: '2006-03-01'});
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const s3Client = new AWS.S3({apiVersion: config.get('aws_s3_api_version')});
+const stripe = require("stripe")(config.get('stripe_secret_key'));
 const LruCache = require("lru-cache");
 const timeout = require('connect-timeout');
 const zlib = require('zlib');
@@ -98,7 +98,7 @@ const SQL = require('./db/sql');
 // # Slack setup
 
 var WebClient = require('@slack/client').WebClient;
-var web = new WebClient(process.env.SLACK_API_TOKEN);
+var web = new WebClient(config.get('slack_api_token'));
 // const winston = require("winston");
 // # notifications
 const winston = console;
@@ -107,7 +107,8 @@ const sendTextEmail = emailSenders.sendTextEmail;
 const sendTextEmailWithBackupOnly = emailSenders.sendTextEmailWithBackupOnly;
 
 const resolveWith = (x) => { return Promise.resolve(x);};
-const intercomClient = !isTrue(process.env.DISABLE_INTERCOM) ? new IntercomOfficial.Client({'token': process.env.INTERCOM_ACCESS_TOKEN}) : {
+const intercomClient = !isTrue(config.get('disable_intercom')) ? new IntercomOfficial.Client(
+  {'token': config.get('intercom_access_token')}) : {
   leads: {
     create: resolveWith({body: {user_id: "null_intercom_user_id"}}),
     update: resolveWith({}),
@@ -160,12 +161,14 @@ Promise.onPossiblyUnhandledRejection(function(err) {
   // throw err; // not throwing since we're printing stack traces anyway
 });
 
-const adminEmailDataExport = process.env.ADMIN_EMAIL_DATA_EXPORT || ""
-const adminEmailDataExportTest = process.env.ADMIN_EMAIL_DATA_EXPORT_TEST || ""
-const adminEmailEmailTest = process.env.ADMIN_EMAIL_EMAIL_TEST || ""
+const adminEmailDataExport = config.get('admin_email_data_export');
+const adminEmailDataExportTest = config.get('admin_email_data_export_test');
+const adminEmailEmailTest = config.get('admin_email_email_test');
 
-const admin_emails = process.env.ADMIN_EMAILS ? JSON.parse(process.env.ADMIN_EMAILS) : [];
-const polisDevs = process.env.ADMIN_UIDS ? JSON.parse(process.env.ADMIN_UIDS) : [];
+const admin_emails = config.get('admin_emails');
+const polisDevs = config.get('admin_uids');
+
+
 function isPolisDev(uid) {
   console.log("polisDevs", polisDevs)
   return polisDevs.indexOf(uid) >= 0;
