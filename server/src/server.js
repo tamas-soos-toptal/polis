@@ -2,8 +2,8 @@
 
 "use strict";
 
-let POLIS_ROOT = process.env.POLIS_ROOT
-var config = require(POLIS_ROOT + 'config/config.js');
+let CONFIG_ROOT = process.env.CONFIG_ROOT
+var config = require(CONFIG_ROOT + 'config.js');
 
 // keep these lines to help with debugging conversion
 // from process.env to config.get

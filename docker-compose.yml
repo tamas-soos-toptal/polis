@@ -15,8 +15,6 @@
 # to stop:
 # docker-compose down
 
-## TODO: add config container
-
 version: "3.1"
 
 services:
@@ -24,7 +22,7 @@ services:
     container_name: polis-server
     env_file: ./server/docker-dev.env
     environment:
-      - POLIS_ROOT=/app/
+      - CONFIG_ROOT=/app/config/
     image: polisdemo/server:dev
     build:
       context: ./server
@@ -32,6 +30,7 @@ services:
     depends_on:
       - "postgres"
       - "file-server"
+      - "config"
     networks:
       - "polis-dev"
     volumes:
@@ -87,6 +86,8 @@ services:
 
   file-server:
     container_name: polis-file-server
+    environment:
+      - CONFIG_ROOT=/app/config/
     image: polisdemo/file-server:dev
     build:
       context: ./file-server
@@ -104,28 +105,40 @@ services:
 
   client-participation:
     container_name: polis-client-participation
+    environment:
+      - CONFIG_ROOT=/app/config/
     image: polisdemo/client-participation:dev
     build:
       context: ./client-participation
       args:
         GIT_HASH: "${GIT_HASH}"
+    volumes:
+      - "config:/app/config"
 
   client-admin:
     container_name: polis-client-admin
+    environment:
+      - CONFIG_ROOT=/app/config/
     image: polisdemo/client-admin:dev
     build:
       context: ./client-admin
       args:
         GIT_HASH: "${GIT_HASH}"
+    volumes:
+      - "config:/app/config"
 
   client-report:
     container_name: polis-client-report
+    environment:
+      - CONFIG_ROOT=/app/config/
     image: polisdemo/client-report:dev
     build:
       context: ./client-report
       args:
         GIT_HASH: "${GIT_HASH}"
-
+    volumes:
+      - "config:/app/config"
+      
   maildev:
     image: maildev/maildev:1.1.0
     networks:
