@@ -17,12 +17,19 @@ provider "digitalocean" {
   token = var.do_token
 }
 
+# Create a new SSH key
+resource "digitalocean_ssh_key" "default" {
+  name       = "Terraform Example"
+  public_key = file("~/.ssh/id_rsa.pub")
+}
+
 # Create a new polis Droplet in the sfo3 region
 resource "digitalocean_droplet" "polis" {
   image  = "ubuntu-18-04-x64"
   name   = "polis"
   region = "sfo3"
   size   = "s-1vcpu-2gb"
+  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
 }
 
 resource "digitalocean_floating_ip" "polis" {
@@ -30,19 +37,23 @@ resource "digitalocean_floating_ip" "polis" {
   region     = digitalocean_droplet.polis.region
 }
 
+output "fixed_ip" {
+  value = digitalocean_floating_ip.polis.ip_address
+  }
+
 resource "digitalocean_project" "polis" {
   name        = "polis"
   resources   = [digitalocean_droplet.polis.urn]
 }
 
-resource "digitalocean_domain" "default" {
-  name = "algorithmicdemocracy.org"
-}
+# resource "digitalocean_domain" "default" {
+#   name = "algorithmicdemocracy.org"
+# }
 
 # Add an A record to the domain for www.example.com.
-resource "digitalocean_record" "polis" {
-  domain = digitalocean_domain.default.name
-  type   = "A"
-  name   = "polis"
-  value  = digitalocean_floating_ip.polis.ip_address
-}
+# resource "digitalocean_record" "polis" {
+#   domain = digitalocean_domain.default.name
+#   type   = "A"
+#   name   = "polis"
+#   value  = digitalocean_floating_ip.polis.ip_address
+# }
