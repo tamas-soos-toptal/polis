@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
   }
@@ -25,32 +25,38 @@ resource "digitalocean_ssh_key" "default" {
 
 # Create a new polis Droplet in the sfo3 region
 resource "digitalocean_droplet" "polis" {
-  image  = "ubuntu-18-04-x64"
-  name   = "polis"
-  region = "sfo3"
-  size   = "s-1vcpu-2gb"
+  image    = "ubuntu-18-04-x64"
+  name     = "polis"
+  region   = "sfo3"
+  size     = "s-1vcpu-2gb"
   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
-  
-    connection {
-    host = self.ipv4_address
-    user = "root"
-    type = "ssh"
-    # private_key = file(var.pvt_key)
-    timeout = "2m"
-  }
 
+  connection {
+    host       = self.ipv4_address
+    user       = "root"
+    type       = "ssh"
+    private_key = file("~/.ssh/id_rsa")
+
+    # private_key = file(var.pvt_key)
+    timeout    = "2m"
+  }
+  # You can set TF_LOG to one of the log levels TRACE, DEBUG, INFO, WARN or ERROR to change the verbosity of the logs.
   provisioner "remote-exec" {
     inline = [
+      "ls",
+      # "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7EA0A9C3F273FCD8",
       "sudo apt update",
-      "git clone https://github.com/compdemocracy/polis.",
+      "git clone https://github.com/compdemocracy/polis",
       "sudo apt-get install     apt-transport-https     ca-certificates     curl     gnupg     lsb-release -y",
-      "echo   \"deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
+      "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg",
+      "sudo echo   \"deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "sudo apt-get update",
-      "curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+      "sudo apt-get install docker-ce docker-ce-cli containerd.io -y",
+      "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
       "sudo chmod +x /usr/local/bin/docker-compose",
       "cd polis",
       "docker-compose up --build -d"
-      
+
       # "export PATH=$PATH:/usr/bin",
       # # install nginx
       # "sudo apt update",
@@ -66,11 +72,11 @@ resource "digitalocean_floating_ip" "polis" {
 
 output "fixed_ip" {
   value = digitalocean_floating_ip.polis.ip_address
-  }
+}
 
 resource "digitalocean_project" "polis" {
-  name        = "polis"
-  resources   = [digitalocean_droplet.polis.urn]
+  name      = "polis"
+  resources = [digitalocean_droplet.polis.urn]
 }
 
 # resource "digitalocean_domain" "default" {
